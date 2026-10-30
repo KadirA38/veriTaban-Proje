@@ -1,5 +1,6 @@
 import unittest
 
+from extensions import db
 from main import create_app
 
 
@@ -13,6 +14,11 @@ class HealthCheckTests(unittest.TestCase):
             }
         )
         self.client = self.app.test_client()
+
+    def tearDown(self):
+        with self.app.app_context():
+            db.session.remove()
+            db.engine.dispose()
 
     def test_health_check_reports_connected_database(self):
         response = self.client.get("/api/health")
